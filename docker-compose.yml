@@ -1,0 +1,21 @@
+services:
+  alabot2:
+    image: ghcr.io/alathreon/alabot2:latest
+    container_name: alabot2
+    restart: unless-stopped
+    stdin_open: true  # Keeps System.in.read() blocking so the bot stays alive
+    volumes:
+      - ./config.json:/config/config.json:ro
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300  # Check every 5 minutes
+      - WATCHTOWER_LABEL_ENABLE=true  # Only update containers with the watchtower label
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
